@@ -2,3 +2,4 @@ lib/
 builds/
 .vscode/
 bot.token
+bot.id
