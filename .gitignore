@@ -1,0 +1,6 @@
+lib/sleepy-discord/
+lib/json.hpp
+builds/
+.vscode/
+bot.token
+bot.id
