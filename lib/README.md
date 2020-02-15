@@ -1,5 +1,5 @@
 # Libraries
-You will be needing the following libraries in order for the bot to work.
+You will be needing the following libraries in order for the bot to compile.
 
 #### File Structure
 In order for the program to compile correctly your libraries should be placed like this:
