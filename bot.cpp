@@ -20,6 +20,10 @@ string BOT_TOKEN;		//
 
 json CONFIG;			// loaded when the bot has loaded
 
+string CFG_PREFIX;					// commands prefix 
+bool CFG_PREFIX_SPACE;				// of there is a space after the prefix or not
+unsigned int CFG_PREFIX_LEN;		// length of the prefix
+
 ifstream fileHandle;	// handle for the file reading 
 
 // Debug functions
@@ -62,27 +66,39 @@ void readConfigJSON( string filename ) {
 	jsonData >> CONFIG;
 }
 
+void updateConfig() {
+	CFG_PREFIX = CONFIG["cmdPrefix"];
+	CFG_PREFIX_SPACE = CONFIG["cmdPrefixSpace"];
+	CFG_PREFIX_LEN = CFG_PREFIX.length();
+
+	if( CFG_PREFIX_SPACE == true ) {
+		CFG_PREFIX_LEN++;
+	}
+}
+
 class BotClient : public SleepyDiscord::DiscordClient {
 	public:
 		using SleepyDiscord::DiscordClient::DiscordClient;
 
 		void onReady( string* json ) override {
-			// load the config json
+			// load the config JSON
 			readConfigJSON( CONFIG_FILE );
+			updateConfig(); // update the JSON object
+
 			print("Bot configuration loaded.");
 		}
 
 		void onMessage( SleepyDiscord::Message msg ) {
 			string username = getUserNameID( msg.author );
-			string prefix = CONFIG["cmdPrefix"];
+			print( username + " sent: " + msg.content );
 			
-			if( msg.startsWith(prefix) ) { // check if the message starts with the command prefix
+			if( msg.startsWith(CFG_PREFIX) ) { // check if the message starts with the command prefix
 				// print( getUserNameID( msg.author ) + " issued command: " + msg.content );
 				// sendMessage( msg.channelID, "General Kenobi!" );
 				print("Starts with prefix!" );
 
+				// get the second argument
 			}
-			print( username + " sent: " + msg.content );
 		}
 };
 
