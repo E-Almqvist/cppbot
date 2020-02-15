@@ -10,6 +10,7 @@
 
 #include "sleepy_discord/websocketpp_websocket.h" // discord library
 #include <fstream> // used for reading files
+#include <iostream>
 
 using json = nlohmann::json;
 using namespace std;
@@ -45,11 +46,19 @@ string readFromFile( string filename ) {
 string getBotToken() { return readFromFile( TOKEN_FILE ); }
 string getBotID() { return readFromFile( ID_FILE ); }
 
-string getUserNameID( SleepyDiscord::User user ) { return user.username + "#" + user.discriminator; } // get the typical username format for discord like "user#1224"
+// get the typical username format for discord like "user#1224"
+string getUserNameID( SleepyDiscord::User user ) { 
+	return user.username + "#" + user.discriminator; 
+} 
 
 // Config loading
 void readConfigJSON( string filename ) {
 	ifstream jsonData( "config.json" );
+
+	if( !jsonData ) {
+		error( "Could not read from JSON config file. Aborting..." );
+		exit(1);
+	}
 	jsonData >> CONFIG;
 }
 
@@ -57,7 +66,7 @@ class BotClient : public SleepyDiscord::DiscordClient {
 	public:
 		using SleepyDiscord::DiscordClient::DiscordClient;
 
-		void onReady( std::string* json ) override {
+		void onReady( string* json ) override {
 			// load the config json
 			readConfigJSON( CONFIG_FILE );
 			print("Bot configuration loaded.");
@@ -65,13 +74,13 @@ class BotClient : public SleepyDiscord::DiscordClient {
 
 		void onMessage( SleepyDiscord::Message msg ) {
 			string username = getUserNameID( msg.author );
-
-			if( msg.startsWith(CONFIG["cmdPrefix"]) ) { // check if the message starts with the command prefix
+			string prefix = CONFIG["cmdPrefix"];
+			
+			if( msg.startsWith(prefix) ) { // check if the message starts with the command prefix
 				// print( getUserNameID( msg.author ) + " issued command: " + msg.content );
 				// sendMessage( msg.channelID, "General Kenobi!" );
 				print("Starts with prefix!" );
-			// } else {
-			// 	print( username + " sent: " + msg.content );
+
 			}
 			print( username + " sent: " + msg.content );
 		}
