@@ -1,7 +1,7 @@
 # cppbot
-Discord bot written in C++ with the SleepyDiscord library
+Discord bot written in C++ with the SleepyDiscord library.
 
-## Configuration
+### Configuration
 Create a file called "bot.token" and "bot.id". Put the token in "bot.token" and the bot id in the "bot.id" file.
 Keep in mind that the files have to be in the same directory as the compiled program!
 ###### Examples:
@@ -9,5 +9,8 @@ Keep in mind that the files have to be in the same directory as the compiled pro
 
 `echo YOUR_TOKEN > bot.token`
 
-## Sleepy Discord
-Github: https://github.com/yourWaifu/sleepy-discord
+### Dependencies
+
+Sleepy Discord: https://github.com/yourWaifu/sleepy-discord
+
+C++ JSON: https://github.com/nlohmann/json
