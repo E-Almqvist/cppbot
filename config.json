@@ -2,14 +2,11 @@
 	"cmdPrefix" : "bot",
 	"cmdPrefixSpace" : true,
 	"cmds" : {
-		"test" : {
-			"retrunMsg" : "This is a test. But a very cool one!"
-		},
 		"creator" : {
 			"returnMsg" : "The creator of this bot is 'gnomerd#9175'!"
 		},
-		"a very long sentence" : {
-			"returnMsg" : "Indeed it is."
+		"hello" : {
+			"returnMsg" : "**Hello there!**"
 		}
 	} 
 }

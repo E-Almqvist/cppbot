@@ -11,6 +11,7 @@
 #include "sleepy_discord/websocketpp_websocket.h" // discord library
 #include <fstream> // used for reading files
 #include <iostream>
+#include <vector>
 
 using json = nlohmann::json;
 using namespace std;
@@ -76,6 +77,38 @@ void updateConfig() {
 	}
 }
 
+// String manipulation functions
+
+bool isStartingWithPrefix( string text ) {
+	return text.find( CFG_PREFIX ) == 0;
+}
+
+string runBotCommand( string text ) {
+	if( CFG_PREFIX_SPACE == true ) {
+		// split the text
+		vector<string> res;
+		istringstream iss( text );
+		for( string arg; iss >> arg; ) {
+			res.push_back( arg );
+		}
+
+		if( res[0] == CONFIG["cmdPrefix"] ) {
+			if( res.size() == 2 && !res[1].empty() ) { // there are only 1 argument so no need to check if it is greater than or not
+				auto cmdFind = CONFIG["cmds"].find(res[1]);
+
+				if( cmdFind != CONFIG["cmds"].end() ) { // check if the command exists
+					return CONFIG["cmds"][res[1]]["returnMsg"];
+				}
+			}
+		}
+	} else {
+		if( isStartingWithPrefix(text) ) {
+			// cut out the prefix
+		}
+	}
+	return "";
+}
+
 class BotClient : public SleepyDiscord::DiscordClient {
 	public:
 		using SleepyDiscord::DiscordClient::DiscordClient;
@@ -91,13 +124,13 @@ class BotClient : public SleepyDiscord::DiscordClient {
 		void onMessage( SleepyDiscord::Message msg ) {
 			string username = getUserNameID( msg.author );
 			print( username + " sent: " + msg.content );
-			
-			if( msg.startsWith(CFG_PREFIX) ) { // check if the message starts with the command prefix
-				// print( getUserNameID( msg.author ) + " issued command: " + msg.content );
-				// sendMessage( msg.channelID, "General Kenobi!" );
-				print("Starts with prefix!" );
 
-				// get the second argument
+			if( isStartingWithPrefix( msg.content ) ) {
+				string replyTxt = runBotCommand( msg.content );
+
+				if( replyTxt != "" ) {
+					sendMessage( msg.channelID, replyTxt );
+				}
 			}
 		}
 };
