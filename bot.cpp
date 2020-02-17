@@ -104,6 +104,12 @@ string runBotCommand( string text ) {
 	} else {
 		if( isStartingWithPrefix(text) ) {
 			// cut out the prefix
+			string cmd = text.substr( CFG_PREFIX_LEN, text.length() );
+			print(cmd);
+			auto cmdFind = CONFIG["cmds"].find(cmd);
+			if( cmdFind != CONFIG["cmds"].end() ) {
+				return CONFIG["cmds"][cmd]["returnMsg"];
+			}
 		}
 	}
 	return "";
