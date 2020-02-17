@@ -83,6 +83,11 @@ bool isStartingWithPrefix( string text ) {
 	return text.find( CFG_PREFIX ) == 0;
 }
 
+bool commandExists( string cmd ) {
+	auto cmdFind = CONFIG["cmds"].find( cmd );
+	return cmdFind != CONFIG["cmds"].end();
+}
+
 string runBotCommand( string text ) {
 	if( CFG_PREFIX_SPACE == true ) {
 		// split the text
@@ -94,9 +99,8 @@ string runBotCommand( string text ) {
 
 		if( res[0] == CONFIG["cmdPrefix"] ) {
 			if( res.size() == 2 && !res[1].empty() ) { // there are only 1 argument so no need to check if it is greater than or not
-				auto cmdFind = CONFIG["cmds"].find(res[1]);
-
-				if( cmdFind != CONFIG["cmds"].end() ) { // check if the command exists
+			
+				if( commandExists(res[1]) ) { // check if the command exists
 					return CONFIG["cmds"][res[1]]["returnMsg"];
 				}
 			}
@@ -105,9 +109,7 @@ string runBotCommand( string text ) {
 		if( isStartingWithPrefix(text) ) {
 			// cut out the prefix
 			string cmd = text.substr( CFG_PREFIX_LEN, text.length() );
-			print(cmd);
-			auto cmdFind = CONFIG["cmds"].find(cmd);
-			if( cmdFind != CONFIG["cmds"].end() ) {
+			if( commandExists(cmd) ) {
 				return CONFIG["cmds"][cmd]["returnMsg"];
 			}
 		}
