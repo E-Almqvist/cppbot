@@ -21,11 +21,11 @@ string BOT_TOKEN;		//
 
 json CONFIG;			// loaded when the bot has loaded
 
-string CFG_PREFIX;					// commands prefix 
-bool CFG_PREFIX_SPACE;				// of there is a space after the prefix or not
-unsigned int CFG_PREFIX_LEN;		// length of the prefix
+string CFG_PREFIX;		// commands prefix 
+bool CFG_PREFIX_SPACE;		// of there is a space after the prefix or not
+unsigned int CFG_PREFIX_LEN;	// length of the prefix
 
-ifstream fileHandle;	// handle for the file reading 
+ifstream fileHandle;		// handle for the file reading 
 
 // Debug functions
 void print( string txt ) { cout << PRINT_PREFIX << txt << endl; }
