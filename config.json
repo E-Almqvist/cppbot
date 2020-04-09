@@ -1,6 +1,6 @@
 {
-	"cmdPrefix" : "bot",
-	"cmdPrefixSpace" : true,
+	"cmdPrefix" : "!",
+	"cmdPrefixSpace" : false,
 	"statusText" : "!help for help.",
 	"cmds" : {
 		"creator" : {
