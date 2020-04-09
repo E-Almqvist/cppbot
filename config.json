@@ -1,6 +1,7 @@
 {
 	"cmdPrefix" : "bot",
 	"cmdPrefixSpace" : true,
+	"statusText" : "!help for help.",
 	"cmds" : {
 		"creator" : {
 			"returnMsg" : "The creator of this bot is 'gnomerd#9175'!"

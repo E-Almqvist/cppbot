@@ -121,12 +121,16 @@ class BotClient : public SleepyDiscord::DiscordClient {
 	public:
 		using SleepyDiscord::DiscordClient::DiscordClient;
 
-		void onReady( string* json ) override {
+		virtual void onReady( SleepyDiscord::Ready readyData ) override {
 			// load the config JSON
 			readConfigJSON( CONFIG_FILE );
 			updateConfig(); // update the JSON object
 
 			print("Bot configuration loaded.");
+			cout << "Prefix length: " << CFG_PREFIX_LEN;
+
+			// Update bot status
+			updateStatus(CONFIG["statusText"]);
 		}
 
 		void onMessage( SleepyDiscord::Message msg ) {
@@ -135,10 +139,9 @@ class BotClient : public SleepyDiscord::DiscordClient {
 
 			if( isStartingWithPrefix( msg.content ) ) {
 				string replyTxt = runBotCommand( msg.content );
-
 				if( replyTxt != "" ) {
 					sendMessage( msg.channelID, replyTxt );
-				}
+				} 
 			}
 		}
 };
