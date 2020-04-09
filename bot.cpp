@@ -25,6 +25,9 @@ string CFG_PREFIX;		// commands prefix
 bool CFG_PREFIX_SPACE;		// of there is a space after the prefix or not
 unsigned int CFG_PREFIX_LEN;	// length of the prefix
 
+bool CFG_HELP_ALLOW = true;	// Allow the help command to display all the commands
+string CFG_HELP_CMD = "";	// Help command
+
 ifstream fileHandle;		// handle for the file reading 
 
 // Debug functions
@@ -54,7 +57,18 @@ string getBotID() { return readFromFile( ID_FILE ); }
 // get the typical username format for discord like "user#1224"
 string getUserNameID( SleepyDiscord::User user ) { 
 	return user.username + "#" + user.discriminator; 
-} 
+}
+
+// generate a message string for the help command
+string generateHelpString( json cfg ) {
+	string helpStr = ">>> __**Bot Commands**__\\n\\n";
+
+	for (json::iterator it = cfg.begin(); it != cfg.end(); ++it ) {
+		helpStr += "**" + to_string(it.key()) + "** : `" + to_string(it.value()) + "`\\n";
+	}
+	
+	return helpStr;
+}
 
 // Config loading
 void readConfigJSON( string filename ) {
@@ -127,10 +141,12 @@ class BotClient : public SleepyDiscord::DiscordClient {
 			updateConfig(); // update the JSON object
 
 			print("Bot configuration loaded.");
-			cout << "Prefix length: " << CFG_PREFIX_LEN;
 
 			// Update bot status
 			updateStatus(CONFIG["statusText"]);
+
+			// Generate help command
+			generateHelpString( CONFIG["cmds"] ); 
 		}
 
 		void onMessage( SleepyDiscord::Message msg ) {
