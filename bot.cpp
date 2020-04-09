@@ -20,6 +20,7 @@ string BOT_ID;     		// loaded before the bot is ran
 string BOT_TOKEN;		// 
 
 json CONFIG;			// loaded when the bot has loaded
+string HELPMSG;			// Also loaded when the bot is loaded
 
 string CFG_PREFIX;		// commands prefix 
 bool CFG_PREFIX_SPACE;		// of there is a space after the prefix or not
@@ -60,13 +61,13 @@ string getUserNameID( SleepyDiscord::User user ) {
 }
 
 // generate a message string for the help command
-string generateHelpString( json cfg ) {
-	string helpStr = ">>> __**Bot Commands**__\\n\\n";
+void generateHelpString( json cfg ) {
+	string helpStr = ">>> __**Bot Commands**__\\n";
 
 	for (json::iterator it = cfg.begin(); it != cfg.end(); ++it ) {
-		helpStr += "**" + to_string(it.key()) + "** : `" + to_string(it.value()) + "`\\n";
+		helpStr += "**" + (string)(it.key()) + "** : `" + "`\\n";
 	}
-	
+	HELPMSG = helpStr;
 	return helpStr;
 }
 
@@ -146,7 +147,8 @@ class BotClient : public SleepyDiscord::DiscordClient {
 			updateStatus(CONFIG["statusText"]);
 
 			// Generate help command
-			generateHelpString( CONFIG["cmds"] ); 
+			generateHelpString( CONFIG["cmds"] );
+			print(HELPMSG);
 		}
 
 		void onMessage( SleepyDiscord::Message msg ) {
