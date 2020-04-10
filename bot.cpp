@@ -17,7 +17,8 @@ using json = nlohmann::json;
 using namespace std;
 
 string BOT_ID;     		// loaded before the bot is ran
-string BOT_TOKEN;		// 
+string BOT_TOKEN;		//
+string HELPMSG;
 
 json CONFIG;			// loaded when the bot has loaded
 
