@@ -20,7 +20,6 @@ string BOT_ID;     		// loaded before the bot is ran
 string BOT_TOKEN;		// 
 
 json CONFIG;			// loaded when the bot has loaded
-string HELPMSG;			// Also loaded when the bot is loaded
 
 string CFG_PREFIX;		// commands prefix 
 bool CFG_PREFIX_SPACE;		// of there is a space after the prefix or not
@@ -145,13 +144,13 @@ class BotClient : public SleepyDiscord::DiscordClient {
 	public:
 		using SleepyDiscord::DiscordClient::DiscordClient;
 
-		virtual void onReady( SleepyDiscord::Ready readyData ) override {
+		void onReady( string* json ) override {
 			// load the config JSON
 			readConfigJSON( CONFIG_FILE );
 			updateConfig(); // update the JSON object
 
 			print("Bot configuration loaded.");
-
+			
 			// Update bot status
 			updateStatus(CONFIG["statusText"]);
 			
@@ -168,9 +167,10 @@ class BotClient : public SleepyDiscord::DiscordClient {
 
 			if( isStartingWithPrefix( msg.content ) ) {
 				string replyTxt = runBotCommand( msg.content );
+
 				if( replyTxt != "" ) {
 					sendMessage( msg.channelID, replyTxt );
-				} 
+				}
 			}
 		}
 };
