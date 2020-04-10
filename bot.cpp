@@ -63,12 +63,14 @@ string getUserNameID( SleepyDiscord::User user ) {
 // generate a message string for the help command
 void generateHelpString( json cfg ) {
 	string helpStr = ">>> __**Bot Commands**__\\n";
-
+	auto descHandle = 0;
 	for (json::iterator it = cfg.begin(); it != cfg.end(); ++it ) {
-		helpStr += "**" + (string)(it.key()) + "** : `" + "`\\n";
+		descHandle = cfg[(string)(it.key())].find("desc");
+		if( descHandle != it.end() ) { // if there is no description then dont show the command in the list
+			helpStr += "**" + (string)(it.key()) + "** : `" + "`\\n";
+		}
 	}
 	HELPMSG = helpStr;
-	return helpStr;
 }
 
 // Config loading

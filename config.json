@@ -9,6 +9,7 @@
 			"returnMsg" : "The creator of this bot is 'gnomerd#9175'!"
 		},
 		"hello" : {
+			"desc" : "Greet the bot!",
 			"returnMsg" : "**Hello there!**"
 		}
 	} 
