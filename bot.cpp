@@ -145,7 +145,7 @@ class BotClient : public SleepyDiscord::DiscordClient {
 	public:
 		using SleepyDiscord::DiscordClient::DiscordClient;
 
-		void onReady( string* json ) override {
+		virtual void onReady( SleepyDiscord::Ready readyData ) override {
 			// load the config JSON
 			readConfigJSON( CONFIG_FILE );
 			updateConfig(); // update the JSON object
