@@ -1,11 +1,15 @@
 {
-	"cmdPrefix" : "bot",
-	"cmdPrefixSpace" : true,
+	"cmdPrefix" : "!",
+	"cmdPrefixSpace" : false,
+	"statusText" : "!help for help.",
+	"allowHelpCmd" : true,
+	"helpCmd" : "help",
 	"cmds" : {
 		"creator" : {
 			"returnMsg" : "The creator of this bot is 'gnomerd#9175'!"
 		},
 		"hello" : {
+			"desc" : "Greet the bot!",
 			"returnMsg" : "**Hello there!**"
 		}
 	} 

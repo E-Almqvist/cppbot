@@ -20,10 +20,14 @@ string BOT_ID;     		// loaded before the bot is ran
 string BOT_TOKEN;		// 
 
 json CONFIG;			// loaded when the bot has loaded
+string HELPMSG;			// Also loaded when the bot is loaded
 
 string CFG_PREFIX;		// commands prefix 
 bool CFG_PREFIX_SPACE;		// of there is a space after the prefix or not
 unsigned int CFG_PREFIX_LEN;	// length of the prefix
+
+bool CFG_HELP_ALLOW = true;	// Allow the help command to display all the commands
+string CFG_HELP_CMD = "";	// Help command
 
 ifstream fileHandle;		// handle for the file reading 
 
@@ -54,7 +58,20 @@ string getBotID() { return readFromFile( ID_FILE ); }
 // get the typical username format for discord like "user#1224"
 string getUserNameID( SleepyDiscord::User user ) { 
 	return user.username + "#" + user.discriminator; 
-} 
+}
+
+// generate a message string for the help command
+void generateHelpString( json cfg ) {
+	string helpStr = ">>> __**Bot Commands**__\\n";
+	auto descHandle = 0;
+	for (json::iterator it = cfg.begin(); it != cfg.end(); ++it ) {
+		descHandle = cfg[(string)(it.key())].find("desc");
+		if( descHandle != it.end() ) { // if there is no description then dont show the command in the list
+			helpStr += "**" + (string)(it.key()) + "** : `" + "`\\n";
+		}
+	}
+	HELPMSG = helpStr;
+}
 
 // Config loading
 void readConfigJSON( string filename ) {
@@ -121,12 +138,19 @@ class BotClient : public SleepyDiscord::DiscordClient {
 	public:
 		using SleepyDiscord::DiscordClient::DiscordClient;
 
-		void onReady( string* json ) override {
+		virtual void onReady( SleepyDiscord::Ready readyData ) override {
 			// load the config JSON
 			readConfigJSON( CONFIG_FILE );
 			updateConfig(); // update the JSON object
 
 			print("Bot configuration loaded.");
+
+			// Update bot status
+			updateStatus(CONFIG["statusText"]);
+
+			// Generate help command
+			generateHelpString( CONFIG["cmds"] );
+			print(HELPMSG);
 		}
 
 		void onMessage( SleepyDiscord::Message msg ) {
@@ -135,10 +159,9 @@ class BotClient : public SleepyDiscord::DiscordClient {
 
 			if( isStartingWithPrefix( msg.content ) ) {
 				string replyTxt = runBotCommand( msg.content );
-
 				if( replyTxt != "" ) {
 					sendMessage( msg.channelID, replyTxt );
-				}
+				} 
 			}
 		}
 };
