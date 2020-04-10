@@ -25,6 +25,9 @@ string CFG_PREFIX;		// commands prefix
 bool CFG_PREFIX_SPACE;		// of there is a space after the prefix or not
 unsigned int CFG_PREFIX_LEN;	// length of the prefix
 
+bool CFG_HELP_ALLOW = false;	// Allow the help command to display all the commands
+string CFG_HELP_CMD = "help";	// Help command
+
 ifstream fileHandle;		// handle for the file reading 
 
 // Debug functions
@@ -54,7 +57,20 @@ string getBotID() { return readFromFile( ID_FILE ); }
 // get the typical username format for discord like "user#1224"
 string getUserNameID( SleepyDiscord::User user ) { 
 	return user.username + "#" + user.discriminator; 
-} 
+}
+
+// generate a message string for the help command
+void generateHelpString( json cfg ) {
+	string helpStr = ">>> \n__**Bot Commands**__\n\n";
+	string key;
+	for (json::iterator it = cfg.begin(); it != cfg.end(); ++it ) {
+		key = (string)(it.key());	
+		if( cfg[key].find("desc") != cfg[key].end() ) { // if there is no description then dont show the command in the list
+			helpStr += "**" + key + "** : `" + (string)cfg[key]["desc"] + "`\n\n";
+		}
+	}
+	HELPMSG = helpStr;
+}
 
 // Config loading
 void readConfigJSON( string filename ) {
@@ -71,6 +87,9 @@ void updateConfig() {
 	CFG_PREFIX = CONFIG["cmdPrefix"];
 	CFG_PREFIX_SPACE = CONFIG["cmdPrefixSpace"];
 	CFG_PREFIX_LEN = CFG_PREFIX.length();
+
+	CFG_HELP_ALLOW = CONFIG["allowHelpCmd"];
+	CFG_HELP_CMD = CONFIG["helpCmd"];
 
 	if( CFG_PREFIX_SPACE == true ) {
 		CFG_PREFIX_LEN++;
@@ -102,6 +121,8 @@ string runBotCommand( string text ) {
 			
 				if( commandExists(res[1]) ) { // check if the command exists
 					return CONFIG["cmds"][res[1]]["returnMsg"];
+				} else if (res[1] == CFG_HELP_CMD && CFG_HELP_ALLOW) {
+					return HELPMSG;
 				}
 			}
 		}
@@ -111,6 +132,8 @@ string runBotCommand( string text ) {
 			string cmd = text.substr( CFG_PREFIX_LEN, text.length() );
 			if( commandExists(cmd) ) {
 				return CONFIG["cmds"][cmd]["returnMsg"];
+			} else if (cmd == CFG_HELP_CMD && CFG_HELP_ALLOW) { // help command
+				return HELPMSG;
 			}
 		}
 	}
@@ -127,6 +150,15 @@ class BotClient : public SleepyDiscord::DiscordClient {
 			updateConfig(); // update the JSON object
 
 			print("Bot configuration loaded.");
+			
+			// Update bot status
+			updateStatus(CONFIG["statusText"]);
+			
+			if( CFG_HELP_ALLOW ) {
+				// Generate help command
+				generateHelpString( CONFIG["cmds"] );
+				// print(HELPMSG);
+			}
 		}
 
 		void onMessage( SleepyDiscord::Message msg ) {
