@@ -26,7 +26,7 @@ These files should be located where you compiled the bot.
 If you installed the bot via the installation script then you can start the bot via the start
 script. The start script is located in the bots root directory.
 ###### Example:
-`sudo start.sh`
+`sudo sh start.sh`
 
 ### Dependencies
 
