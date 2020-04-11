@@ -1,5 +1,9 @@
 # cppbot
-Discord bot written in C++ with the SleepyDiscord library.
+Discord bot written in C++ with the SleepyDiscord library. You can customize it as you like and
+create custom bot commands!
+
+![Bot Demo](demo/discordbot.gif)
+
 
 ### Configuration
 Create a file called "bot.token" and "bot.id". Put the token in "bot.token" and the bot id in the "bot.id" file.
