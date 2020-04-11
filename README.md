@@ -8,7 +8,7 @@ create custom bot commands!
 Installing and compiling the bot is easy with the install script. 
 `wget https://raw.githubusercontent.com/E-Almqvist/cppbot/master/install.sh && sudo sh install.sh /path/to/bot BOT_NAME`
 Where `/path/to/bot` needs to be an existing directory and `BOT_NAME` will be the bots name. 
-You will need *git* and *wget* to install the bot. You will need *cmake*, *GCC* (compiler) and *make* to compile the bot. 
+You will need *git*, *sudo* and *wget* to install the bot. You will need *cmake*, *GCC* (compiler) and *make* to compile the bot. 
 
 ### Manual Installation
 Literally just clone the repository and compile everything yourself. 
