@@ -44,8 +44,7 @@ target_link_libraries($BOTNAME sleepy-discord)" > CMakeLists.txt
 	echo "Generating start.sh"
 	echo "#!/bin/bash
 echo Starting bot...
-cd Builds
-nohup ./$BOTNAME &" > ../start.sh
+nohup Builds/$BOTNAME &" > ../start.sh
 
 	# Dependencies
 	echo "Installing dependencies..."
