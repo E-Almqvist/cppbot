@@ -31,16 +31,17 @@ string CFG_HELP_CMD = "help";	// Help command
 
 ifstream fileHandle;		// handle for the file reading 
 
+char * BINARY_PATH;
+
 // Debug functions
 void print( string txt ) { cout << PRINT_PREFIX << txt << endl; }
 void error( string txt ) { cerr << ERROR_PREFIX << txt << endl; }
 
 // Info functions
-string readFromFile( string filename ) {
+string readFromFile( string filename, char * path ) {
 	string cont;
-
+	cout << path << endl;
 	fileHandle.open( filename );
-
 	if( !fileHandle ) {
 		error( "Could not read from file '" + filename + "'. Aborting..." );
 		exit(1);
@@ -52,8 +53,8 @@ string readFromFile( string filename ) {
 	return cont;
 }
 
-string getBotToken() { return readFromFile( TOKEN_FILE ); }
-string getBotID() { return readFromFile( ID_FILE ); }
+string getBotToken( char * path ) { return readFromFile( TOKEN_FILE, path ); }
+string getBotID( char * path ) { return readFromFile( ID_FILE, path ); }
 
 // get the typical username format for discord like "user#1224"
 string getUserNameID( SleepyDiscord::User user ) { 
@@ -74,7 +75,7 @@ void generateHelpString( json cfg ) {
 }
 
 // Config loading
-void readConfigJSON( string filename ) {
+void readConfigJSON( string filename, char * path ) {
 	ifstream jsonData( "config.json" );
 
 	if( !jsonData ) {
@@ -147,7 +148,7 @@ class BotClient : public SleepyDiscord::DiscordClient {
 
 		virtual void onReady( SleepyDiscord::Ready readyData ) override {
 			// load the config JSON
-			readConfigJSON( CONFIG_FILE );
+			readConfigJSON( CONFIG_FILE, BINARY_PATH );
 			updateConfig(); // update the JSON object
 
 			print("Bot configuration loaded.");
@@ -176,10 +177,12 @@ class BotClient : public SleepyDiscord::DiscordClient {
 		}
 };
 
-int main() {
-	BOT_TOKEN = getBotToken(); // cache it so that we don't have to call these functions all of the time
-	BOT_ID = getBotID();
+int main( int argc, char * argv[] ) {
+	BINARY_PATH = argv[0];
 
+	BOT_TOKEN = getBotToken( BINARY_PATH ); // cache it so that we don't have to call these functions all of the time
+	BOT_ID = getBotID( BINARY_PATH );
+	
 	BotClient client( BOT_TOKEN, 2 );
 	client.run();
 	
