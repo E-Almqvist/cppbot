@@ -13,6 +13,9 @@
 #include <iostream>
 #include <vector>
 
+#include <unistd.h>
+#include <malloc.h>
+
 using json = nlohmann::json;
 using namespace std;
 
@@ -179,6 +182,12 @@ class BotClient : public SleepyDiscord::DiscordClient {
 
 int main( int argc, char * argv[] ) {
 	BINARY_PATH = argv[0];
+	cout << "Readlink test:" << endl;
+	char * buf;
+	size_t bufsize;
+	cout << readlink( "/proc/self/exe", buf, bufsize ) << endl; // TODO: fix this so that systemd can restart the bot
+	
+	cout << buf << endl;
 
 	BOT_TOKEN = getBotToken( BINARY_PATH ); // cache it so that we don't have to call these functions all of the time
 	BOT_ID = getBotID( BINARY_PATH );
