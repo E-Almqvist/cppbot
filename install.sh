@@ -22,14 +22,14 @@ install() {
 	echo "Installing...";
 	mkdir $BOTPATH/$BOTNAME
 	cd $BOTPATH/$BOTNAME
-	mkdir Source
-	mkdir Builds
+	mkdir src
+	mkdir bin
 
 	# Source-code stuff
-	cd Source
+	cd src
 	git clone https://github.com/E-Almqvist/cppbot.git
 	mv cppbot/* ./
-	mv config.json ../Builds
+	mv config.json ../bin
 	
 	# CMakeLists.txt generation
 	echo "Generating CMakeLists.txt"
@@ -44,7 +44,7 @@ target_link_libraries($BOTNAME sleepy-discord)" > CMakeLists.txt
 	echo "Generating start.sh"
 	echo "#!/bin/bash
 echo Starting bot...
-nohup Builds/$BOTNAME &" > ../start.sh
+nohup bin/$BOTNAME &" > ../start.sh
 
 	# Dependencies
 	echo "Installing dependencies..."
@@ -62,27 +62,33 @@ nohup Builds/$BOTNAME &" > ../start.sh
 	# dumb workaround but it works
 	cd ..
 
-	# Cleaning
-	echo "Cleaning unwanted stuff..."
-	sudo rm -r cppbot # empty folder, not needed
-	sudo rm -r demo # dont need the demo stuff
-	rm install.sh
-
 	# Compiling the bot
 	read -p "Do you want to compile the bot? This might take a while. (y/n): " ans2
 	
 	if [ "$ans2" == "y" ] || [ $ans2 == "Y" ]; then
 		echo "Compiling... This might take a while."
-		cd ../Builds
-		cmake ../Source
+		cd ../bin
+		cmake ../src
 		make
 		echo -e "\e[32mInstallation & compilation complete!\e[0m"
-		exit
+		cd ..
 	else
 		echo -e "\e[32mInstallation complete!\e[0m 
 Keep in mind that you have to compile the bot yourself now."
-		exit
+		cd ..
 	fi
+
+	read -p "(OPTIONAL) Do you want to create a systemd service template? (y/n): " serv
+	if [ "$serv" == "y" ] || [ $serv == "Y" ]; then
+		mv src/cppbot@.service ./
+		echo "Created template in '$PWD'."
+	fi
+	
+	# Cleaning
+	echo "Cleaning unwanted stuff..."
+	rm -rf cppbot # empty folder, not needed
+	rm -rf demo # dont need the demo stuff
+	rm install.sh
 }
 
 read -p "Do you want to install cppbot at '$1'? (y/n): " ans

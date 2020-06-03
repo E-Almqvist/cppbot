@@ -1,0 +1,16 @@
+[Unit]
+Description=cppbot (Discord Bot): %i
+After=network.target
+StartLimitIntervalSec=1
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=cppbot
+Group=bot
+ExecStart=/opt/bots/discord/%i/bin/%i 
+
+[Install]
+WantedBy=multi-user.target
+
