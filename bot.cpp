@@ -1,8 +1,8 @@
 #define PRINT_PREFIX "[DEBUG] "
 #define ERROR_PREFIX "[ERROR] "
 
-#define TOKEN_FILE "bot.token"
-#define ID_FILE "bot.id"
+#define TOKEN_FILE "/bot.token" // important to have the "/" infront otherwise it will parse it wrong
+#define ID_FILE "/bot.id"
 
 #define CONFIG_FILE "config.json"
 
@@ -13,8 +13,9 @@
 #include <iostream>
 #include <vector>
 
+#include <libgen.h>
+#include <limits.h>
 #include <unistd.h>
-#include <malloc.h>
 
 using json = nlohmann::json;
 using namespace std;
@@ -41,10 +42,9 @@ void print( string txt ) { cout << PRINT_PREFIX << txt << endl; }
 void error( string txt ) { cerr << ERROR_PREFIX << txt << endl; }
 
 // Info functions
-string readFromFile( string filename, char * path ) {
+string readFromFile( string filename, char * binpath ) {
 	string cont;
-	cout << path << endl;
-	fileHandle.open( filename );
+	fileHandle.open( (string)binpath + filename );
 	if( !fileHandle ) {
 		error( "Could not read from file '" + filename + "'. Aborting..." );
 		exit(1);
@@ -56,8 +56,8 @@ string readFromFile( string filename, char * path ) {
 	return cont;
 }
 
-string getBotToken( char * path ) { return readFromFile( TOKEN_FILE, path ); }
-string getBotID( char * path ) { return readFromFile( ID_FILE, path ); }
+string getBotToken( char * binpath ) { return readFromFile( TOKEN_FILE, binpath ); }
+string getBotID( char * binpath ) { return readFromFile( ID_FILE, binpath ); }
 
 // get the typical username format for discord like "user#1224"
 string getUserNameID( SleepyDiscord::User user ) { 
@@ -78,8 +78,8 @@ void generateHelpString( json cfg ) {
 }
 
 // Config loading
-void readConfigJSON( string filename, char * path ) {
-	ifstream jsonData( "config.json" );
+void readConfigJSON( string filename, char * binpath ) {
+	ifstream jsonData( (string)binpath + "/config.json" );
 
 	if( !jsonData ) {
 		error( "Could not read from JSON config file. Aborting..." );
@@ -181,19 +181,21 @@ class BotClient : public SleepyDiscord::DiscordClient {
 };
 
 int main( int argc, char * argv[] ) {
-	BINARY_PATH = argv[0];
-	cout << "Readlink test:" << endl;
-	char * buf;
-	size_t bufsize;
-	cout << readlink( "/proc/self/exe", buf, bufsize ) << endl; // TODO: fix this so that systemd can restart the bot
 	
-	cout << buf << endl;
+	char buf[PATH_MAX];
+	ssize_t count = readlink( "/proc/self/exe", buf, PATH_MAX );
+	if( count != -1 ) {
+		BINARY_PATH = dirname(buf);
 
-	BOT_TOKEN = getBotToken( BINARY_PATH ); // cache it so that we don't have to call these functions all of the time
-	BOT_ID = getBotID( BINARY_PATH );
+		BOT_TOKEN = getBotToken( BINARY_PATH ); // cache it so that we don't have to call these functions all of the time
+		BOT_ID = getBotID( BINARY_PATH );
 	
-	BotClient client( BOT_TOKEN, 2 );
-	client.run();
+		BotClient client( BOT_TOKEN, 2 );
+		client.run();
 	
-	return 0;
+		return 0;
+	} else {
+		error("Unable to read binary path from symlink.");
+		return 1;
+	}
 }
