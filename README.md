@@ -1,4 +1,7 @@
-# cppbot
+# Disclaimer
+This project is old and deprecated. Feel free to take a look in the spaghetti code :)
+
+## cppbot
 Discord bot written in C++ with the SleepyDiscord library. You can customize it as you like and
 create custom bot commands!
 
